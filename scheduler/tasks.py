@@ -167,6 +167,15 @@ def download_bloc():
     download_slots(slots_to_download)
 
 
+def get_schedule() -> Schedule:
+    if Schedule.objects.filter(date=datetime.now().date()).exists():
+        return Schedule.objects.filter(date=datetime.now().date())[0]
+    else:
+        s = generate_schedule()
+        download_bloc()
+        return s
+
+
 def night_duties():
     """
     This runs every night at 11:30 pm, it does the following:
@@ -193,7 +202,7 @@ def morning_duties():
     """
     print("running morning duties...")
 
-    schedule = Schedule.objects.filter(date=datetime.now().date())[0]
+    schedule = get_schedule()
     download_slots(schedule.morning_slots)
 
     # todo cleanup episodes
@@ -207,7 +216,7 @@ def afternoon_duties():
     """
     print("running afternoon duties...")
 
-    schedule = Schedule.objects.filter(date=datetime.now().date())[0]
+    schedule = get_schedule()
     download_slots(schedule.afternoon_slots)
 
     # todo cleanup episodes
@@ -221,7 +230,7 @@ def evening_duties():
     """
     print("running evening duties...")
 
-    schedule = Schedule.objects.filter(date=datetime.now().date())[0]
+    schedule = get_schedule()
     download_slots(schedule.evening_slots)
 
     # todo cleanup episodes

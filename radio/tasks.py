@@ -4,7 +4,8 @@ from datetime import datetime, time, timedelta
 
 from django.conf import settings
 
-from scheduler.models import Schedule, Slot
+from scheduler.models import Slot
+from scheduler.tasks import get_schedule
 
 from .apps import byte_chunk, last_chunk_update
 
@@ -43,10 +44,7 @@ def get_current_slot():
         else:
             return temp_datetime.time()
 
-    if Schedule.objects.filter(date=datetime.now().date()).exists():
-        schedule = Schedule.objects.filter(date=datetime.now().date())[0]
-    else:
-        return None
+    schedule = get_schedule()
 
     dtslots = list(schedule.slots.order_by("datetime"))
     current_slots = []
