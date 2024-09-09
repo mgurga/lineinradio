@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.core.files.images import get_image_dimensions
 from django.shortcuts import redirect, render
 
-from scheduler.models import Schedule
+from scheduler.tasks import get_schedule
 
 from .forms import (
     CreateEpisodeForm,
@@ -20,8 +20,7 @@ from .models import DJ, Episode, Show, Theme
 
 
 def index_page(request):
-    if Schedule.objects.filter(date=datetime.now().date()).exists():
-        schedule = Schedule.objects.filter(date=datetime.now().date())[0]
+    schedule = get_schedule()
     return render(request, "index.html", {"sch": schedule})
 
 
