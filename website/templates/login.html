@@ -1,0 +1,46 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+
+    <title>login</title>
+</head>
+
+<body>
+    {% include "header.html" %}
+
+    <div class="centered">
+        <h1>Login</h1>
+        <p>No account? <a href="/register" style="text-decoration: underline;">register here</a></p>
+        <br>
+
+        <form action="/login" method="post">
+            {% csrf_token %}
+            <p style="margin-bottom: 5px;">username</p>
+            <input name="username" type="text">
+            <br>
+
+            <p style="margin-bottom: 5px;">password</p>
+            <input name="password" type="password">
+            <br>
+            <br>
+
+            <button>submit</button>
+        </form>
+
+        <br>
+        <p id="suc" style="color: #0f0; visibility: hidden;">successfully created your account!</p>
+    </div>
+</body>
+
+<script>
+    if (location.hash == "#success")
+        document.getElementById("suc").style.visibility = "visible";
+</script>
+
+</html>

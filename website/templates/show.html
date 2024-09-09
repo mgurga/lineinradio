@@ -1,0 +1,116 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+
+    <title>lineinradio about</title>
+</head>
+
+<body>
+    {% include "header.html" %}
+
+    <div class="centered">
+        <a href="/dj/{{ show.creator.handle }}" style="text-decoration: none;">
+            <div id="userbanner">
+                <img id="pfp" src="{{ show.creator.profile_pic.url }}" alt="profile picture">
+                <div>
+                    <h1 id="displayname">{{ show.creator.display_name }}</h1>
+                    <p id="handle">@{{ show.creator.handle }}</p>
+                    <p class="secondarytext">{{ show.creator.bio|linebreaksbr }}</p>
+                </div>
+            </div>
+        </a>
+        <br>
+        <div class="showepcontainer">
+            <img style="width: 100%;" src="{{ show.banner.url }}" alt="show banner">
+            <div class="textbuttonline">
+                <h2 class="text" style="margin: 0;">{{ show.name }}</h2>
+                {% if user.dj.handle == show.creator.handle %}
+                <div>
+                    <a href="/deleteshow/{{ show.id }}"
+                        onclick="return confirm('this action will delete all episodes in the show. are you sure?')">
+                        <button style="background-color: #d00" class="editbuttons">delete</button>
+                    </a>
+                    <a href="/editshow/{{ show.id }}">
+                        <button class="editbuttons">edit</button>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+            <p class="secondarytext">{{ show.description|linebreaksbr }}</p>
+        </div>
+        <br>
+        <div>
+            {% for ep in episodes %}
+            <div class="showepcontainer">
+                <!-- <a href="/episode/{{ ep.id }}"> -->
+                    <div class="textbuttonline">
+                        <h2 class="text" style="margin: 0;">{{ ep.show.name }}: {{ ep.name }}</h2>
+                        {% if user.dj.handle == dj.handle %}
+                        <div>
+                            <a href="/deleteepisode/{{ ep.id }}" onclick="return confirm('are you sure?')">
+                                <button style="background-color: #d00" class="editbuttons">delete</button>
+                            </a>
+                            <a href="/editepisode/{{ ep.id }}">
+                                <button class="editbuttons">edit</button>
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <p class="secondarytext">{{ ep.description|linebreaksbr }}</p>
+                <!-- </a> -->
+            </div>
+            <br>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+
+<style>
+    .showepcontainer {
+        background-color: {{ show.creator.profile_theme.primary }};
+        box-shadow: 5px 5px 1px 1px {{ show.creator.profile_theme.accent }};
+        padding: 5px;
+    }
+
+    .secondarytext {
+        color: {{ show.creator.profile_theme.secondary_text }} !important;
+    }
+
+    .text {
+        color: {{ show.creator.profile_theme.text }} !important;
+    }
+
+    .editbuttons {
+        float: right;
+        width: fit-content;
+        padding: 5px;
+        margin: 5px;
+    }
+
+    #pfp {
+        height: 100px;
+    }
+
+    #userbanner {
+        width: 100%;
+        display: flex;
+        gap: 10px;
+        background-color: {{ show.creator.profile_theme.background }};
+    }
+
+    #displayname {
+        margin: 0;
+    }
+
+    #handle {
+        margin-top: 0;
+    }
+</style>
+
+</html>

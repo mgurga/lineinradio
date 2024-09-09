@@ -1,0 +1,28 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+
+    <title>lineinradio about</title>
+</head>
+
+<body>
+    {% include "header.html" %}
+
+    <div class="centered">
+        <h1 style="margin-bottom: 20px;">About</h1>
+        <p>lineinradio is a 24/7 online radio station that plays sets by djs, new albums by upcoming bands, and
+            playlists submitted by listeners like you :)</p>
+
+        <h2>credits</h2>
+        <p>heavily inspired by <a href="https://whenco.site/">when radio</a> (RIP)</p>
+        <p>designed, hosted, and maintained by <a href="https://github.com/mgurga">mgurga</a></p>
+    </div>
+</body>
+
+</html>

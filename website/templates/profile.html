@@ -1,0 +1,183 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+
+    <title>{{ dj.handle }}</title>
+</head>
+
+<body>
+    {% include "header.html" %}
+
+    <div class="centered">
+        {% if user.dj.handle == dj.handle %}
+        <a href="/customizer">
+            <button id="editbutton">edit</button>
+        </a>
+        {% endif %}
+        <div id="profile-card">
+            <img id="pfp" src="{{ dj.profile_pic.url }}" alt="profile picture">
+            <div>
+                <h1 id="displayname">{{ dj.display_name }}</h1>
+                <p id="handle">@{{ dj.handle }}</p>
+                <p class="secondarytext">{{ dj.bio|linebreaksbr }}</p>
+            </div>
+        </div>
+
+        <div class="textbuttonline">
+            <h2 style="color: {{ dj.profile_theme.text }}">Shows ({{ shows|length }})</h2>
+            {% if user.dj.handle == dj.handle %}
+            <a href="/createshow">
+                <button class="createbuttons">create show</button>
+            </a>
+            {% endif %}
+        </div>
+        <div>
+            {% for show in shows %}
+            <div class="showepcontainer">
+                <a href="/show/{{ show.id }}">
+                    <img style="width: 100%;" src="{{ show.banner.url }}" alt="show banner">
+                    <div class="textbuttonline">
+                        <h2 class="text" style="margin: 0;">{{ show.name }}</h2>
+                        {% if user.dj.handle == dj.handle %}
+                        <div>
+                            <a href="/deleteshow/{{ show.id }}"
+                               onclick="return confirm('this action will delete all episodes in the show. are you sure?')">
+                                <button style="background-color: #d00" class="editbuttons">delete</button>
+                            </a>
+                            <a href="/editshow/{{ show.id }}">
+                                <button class="editbuttons">edit</button>
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <p class="secondarytext">{{ show.description|linebreaksbr }}</p>
+                </a>
+            </div>
+            <br>
+            {% endfor %}
+        </div>
+
+        <div class="textbuttonline">
+            <h2 style="color: {{ dj.profile_theme.text }}">Episodes ({{ episodes|length }})</h2>
+            {% if user.dj.handle == dj.handle %}
+            <a href="/createepisode">
+                <button class="createbuttons">create episode</button>
+            </a>
+            {% endif %}
+        </div>
+        <div>
+            {% for ep in episodes %}
+            <div class="showepcontainer">
+                <!-- <a href="/episode/{{ ep.id }}"> -->
+                    <div class="textbuttonline">
+                        <h2 class="text" style="margin: 0;">{{ ep.show.name }}: {{ ep.name }}</h2>
+                        {% if user.dj.handle == dj.handle %}
+                        <div>
+                            <a href="/deleteepisode/{{ ep.id }}" onclick="return confirm('are you sure?')">
+                                <button style="background-color: #d00" class="editbuttons">delete</button>
+                            </a>
+                            <a href="/editepisode/{{ ep.id }}">
+                                <button class="editbuttons">edit</button>
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <p class="secondarytext">{{ ep.description|linebreaksbr }}</p>
+                <!--</a> -->
+            </div>
+            <br>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+
+<script>
+    if (window.location.hash == "#notverified") {
+        setTimeout(() => {
+            alert("sorry only verified users can create shows/episodes right now");
+            window.location.hash = "";
+        }, 100);
+    }
+</script>
+
+<style>
+    body {
+        background-color: {{ dj.profile_theme.background }};
+        height: 100vh;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    .showepcontainer {
+        background-color: {{ dj.profile_theme.primary }};
+        box-shadow: 5px 5px 1px 1px {{ dj.profile_theme.accent }};
+        padding: 5px;
+    }
+
+    #displayname {
+        color: {{ dj.profile_theme.text }};
+        margin-top: 10px;
+        margin-bottom: 0;
+    }
+
+    #handle {
+        color: {{ dj.profile_theme.secondary_text }};
+        margin-top: 0;
+        margin-bottom: 15px;
+    }
+
+    .textbuttonline {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    #editbutton {
+        float: right;
+        width: fit-content;
+        margin-top: 20px;
+    }
+
+    .createbuttons {
+        float: right;
+        width: fit-content;
+        background-color: #080;
+    }
+
+    .editbuttons {
+        float: right;
+        width: fit-content;
+        padding: 5px;
+        margin: 5px;
+    }
+
+    #pfp {
+        width: max(30%, 150px);
+        height: auto;
+        object-fit: contain;
+    }
+
+    #profile-card {
+        width: 85%;
+        display: flex;
+        gap: 10px;
+    }
+
+    .secondarytext {
+        color: {{ dj.profile_theme.secondary_text }} !important;
+    }
+
+    .text {
+        color: {{ dj.profile_theme.text }} !important;
+    }
+</style>
+
+</html>

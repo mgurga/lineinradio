@@ -1,0 +1,80 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+
+    <title>account settings</title>
+</head>
+
+<body>
+    {% include "header.html" %}
+
+    <div class="centered">
+        <h1>Account Settings</h1>
+        <br>
+
+        <form action="/settings" method="post">
+            {% csrf_token %}
+            <h2 style="margin-top: 5px;">change username</h2>
+            <span>this is the name in your profile's handle and url</span>
+            <input name="username" type="text">
+            <br>
+
+            <button name="submituser">submit</button>
+            {% if userchangeform == "success" %}
+            <span style="color: #0f0; margin-top: 5px;">successfully changed username</span>
+            {% elif userchangeform %}
+            <span style="color: #f11; margin-top: 5px;">
+                {% if userchangeform.errors %}
+                    {% for field in userchangeform %}
+                        {% for error in field.errors %}
+                        {{ error|escape }}
+                        {% endfor %}
+                    {% endfor %}
+                {% endif %}
+            </span>
+            {% endif %}
+        </form>
+
+        <br><br>
+
+        <form action="/settings" method="post">
+            {% csrf_token %}
+            <h2 style="margin-top: 5px;">change password</h2>
+            <span>this is logout all other sessions</span>
+            <input name="password" type="password">
+            <br>
+
+            <button name="submitpass">submit</button>
+            {% if passchangeform == "success" %}
+            <span style="color: #0f0; margin-top: 5px;">successfully changed password</span>
+            {% elif passchangeform %}
+            <span style="color: #f11; margin-top: 5px;">
+                {% if passchangeform.errors %}
+                    {% for field in passchangeform %}
+                        {% for error in field.errors %}
+                        {{ error|escape }}
+                        {% endfor %}
+                    {% endfor %}
+                {% endif %}
+            </span>
+            {% endif %}
+        </form>
+
+        <br><br>
+
+        <form action="/settings" method="post">
+            {% csrf_token %}
+            <h2 style="margin-top: 5px;">delete account</h2>
+            <span>this will delete all shows and episodes you have uploaded :(</span>
+            <button name="submitdelete" onclick="return confirm('are you sure?');" style="background-color: #f00">delete</button>
+        </form>
+    </div>
+</body>
+
+</html>

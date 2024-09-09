@@ -1,0 +1,129 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+
+    <title>edit episode</title>
+</head>
+
+<body>
+    {% include "header.html" %}
+
+    <div class="centered" style="font-size: 25pt;">
+        <h1>Edit Episode: {{ ep.name }}</h1>
+
+        <span style="color: #f11; margin-top: 5px;">
+            {% if createepisodeform.errors %}
+            {% for field in createepisodeform %}
+            {% for error in field.errors %}
+            {{ error|escape }}
+            {% endfor %}
+            {% endfor %}
+            {% endif %}
+        </span>
+
+        <form action="/editepisode/{{ ep.id }}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <h2 style="margin-bottom: 5px; margin-top: 0;">show</h2>
+            <p>all episodes are reqired to be part of a show</p>
+            <select id="showlist" name="show">
+                {% for show in shows %}
+                <option
+                    {% if ep.show == show %}
+                    selected
+                    {% endif %}
+                    value={{ show.id }}>{{ show.name }}</option>
+                {% endfor %}
+            </select>
+
+            <h2 style="margin-bottom: 5px;">episode name</h2>
+            <p>e.g. 'Episode 3 (Sep 10, 2024)' or 'Episode 10: Valentines Day Special'</p>
+            <input name="name" type="text" value="{{ ep.name }}">
+
+            <h2 style="margin-bottom: 5px;">description</h2>
+            <p>your soundcloud url is not shared by default so repeat it below if you desire</p>
+            <textarea rows=6 name="description">{{ ep.description }}</textarea>
+            <br>
+
+            <h2 style="margin-bottom: 5px;">soundcloud link</h2>
+            <p>if the audio is private make sure to submit a link with a secret key (test this by opening it in an
+                incognito tab)</p>
+            <input name="link" type="url" value="{{ ep.link }}">
+
+            <h2 style="margin-bottom: 5px;">preferred time blocs</h2>
+            <p>usually ambient/quiet/lofi sets should be played at night and faster paced sets in the afternoon (check
+                all that apply)</p>
+            <div id="cbgrid">
+                <div class="textcb">
+                    <span>night (12am to 6am)</span>
+                    <input
+                        {% if ep.night_bloc %}
+                        checked
+                        {% endif %}
+                        type="checkbox" name="nightcb" class="cb">
+                </div>
+                <div class="textcb">
+                    <span>morning (6am to 12pm)</span>
+                    <input
+                        {% if ep.morning_bloc %}
+                        checked
+                        {% endif %}
+                        type="checkbox" name="morningcb" class="cb">
+                </div>
+                <div class="textcb">
+                    <span>afternoon (12pm to 6pm)</span>
+                    <input
+                        {% if ep.afternoon_bloc %}
+                        checked
+                        {% endif %}
+                        type="checkbox" name="afternooncb" class="cb">
+                </div>
+                <div class="textcb">
+                    <span>evening (6pm to 12am)</span>
+                    <input 
+                        {% if ep.evening_bloc %}
+                        checked
+                        {% endif %}
+                        type="checkbox" name="eveningcb" class="cb">
+                </div>
+            </div>
+
+            <br>
+            <button>save changes</button>
+            <br>
+            <br>
+            <br>
+        </form>
+    </div>
+</body>
+
+<style>
+    span {
+        color: #eee;
+        font-size: 23px;
+        display: inline-block;
+    }
+
+    .cb {
+        width: 20px;
+        height: 20px;
+        accent-color: var(--primary);
+    }
+
+    #cbgrid {
+        width: 50%;
+    }
+
+    .textcb {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between
+    }
+</style>
+
+</html>

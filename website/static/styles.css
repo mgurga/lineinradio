@@ -1,0 +1,159 @@
+:root {
+    --primary: #c2681e;
+    background-color: #222;
+}
+
+html {
+    font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+p {
+    color: #ddd;
+    font-size: 15pt;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+h1 {
+    color: #eee;
+    font-size: 30pt;
+    margin-bottom: 10px;
+}
+
+h2 {
+    color: #eee;
+    font-size: 20pt;
+    margin-bottom: 10px;
+    text-decoration: none;
+}
+
+span {
+    display: block;
+    color: #ccc;
+    font-size: 15pt;
+    margin-bottom: 10px;
+}
+
+.centered {
+    margin: auto;
+    width: 60%;
+    padding: 10px;
+}
+
+@media (max-width: 1000px) {
+    .centered {
+        margin: auto;
+        width: 100%;
+        padding: 10px;
+    }
+
+    #header-right {
+        display: block;
+        background-color: #333;
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
+
+a {
+    color: #fff;
+    text-decoration: underline;
+}
+
+a:hover {
+    cursor: pointer;
+}
+
+.header-text {
+    text-shadow: var(--primary) 2px 2px 0;
+    margin-right: 20px;
+    margin-left: 10px;
+    text-decoration: none;
+}
+
+.header-text:hover {
+    text-shadow: var(--primary) 2px 2px 0, var(--primary) 0 0 5px;
+}
+
+.header {
+    font-size: 18pt;
+    background-color: #333;
+    cursor: default;
+}
+
+.header-item {
+    margin-left: 5px;
+    margin-right: 5px;
+    text-decoration: none;
+    padding: 8px;
+    display: inline-block;
+}
+
+.header-item:hover {
+    text-shadow: var(--primary) 0 0 5px;
+}
+
+input {
+    width: 75%;
+    background-color: #222;
+    font-size: 18pt;
+    border: 2px solid #333;
+    border-radius: 0;
+    color: #fff;
+    padding: 0.25em 0.5em;
+    display: block;
+}
+
+input:focus {
+    outline: none !important;
+    border: 1px solid var(--primary);
+}
+
+select {
+    width: 50%;
+    background-color: #222;
+    font-size: 18pt;
+    border: 2px solid #333;
+    color: #fff;
+}
+
+select:focus {
+    outline: none !important;
+    border: 1px solid var(--primary);
+}
+
+button {
+    width: 20%;
+    background-color: var(--primary);
+    color: #fff;
+    border-radius: 5px;
+    border: 0;
+    font-size: 15pt;
+    padding: 10px;
+    cursor: pointer;
+    display: block;
+}
+
+button:disabled {
+    background-color: #111;
+}
+
+textarea {
+    width: 100%;
+    background-color: #222;
+    border: 2px solid #333;
+    font-size: 18px;
+    color: #eee;
+}
+
+textarea:focus {
+    outline: none !important;
+    border: 1px solid var(--primary);
+}

@@ -1,0 +1,91 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+
+    <title>lineinradio</title>
+</head>
+
+<body>
+    {% include "header.html" %}
+
+    <div class="centered">
+        <h1>Hey there! Click play to listen in!</h1>
+        <audio id="audio" autoplay style="width: 100%" controls></audio>
+        <br>
+        <h2>{{ sch.current_bloc_name }}</h2>
+        <div style="margin-left: 40px;">
+            {% for slot in sch.current_slots %}
+            {% include "slot.html" with slot=slot %}
+            {% endfor %}
+        </div>
+    </div>
+</body>
+
+<script>
+    var ws = new WebSocket("ws://" + window.location.host + "/ws/radio/");
+    const audio = document.getElementById("audio");
+    audio.volume = 0.5;
+    var mediaSource = new MediaSource();
+    var queue = [];
+    var sourceBuffer = null;
+    var isFirstBlock = true;
+
+    ws.onopen = () => {
+        // console.log("websocket opened")
+    }
+
+    // code adapted from: https://github.com/SamuelFisher/WebSocketAudio
+    function appendBlock() {
+        if (sourceBuffer.updating) return;
+        if (queue.length == 0) return;
+
+        if (queue.length == 0 &&
+            audio.currentTime > 2 &&
+            audio.currentTime > this.sourceBuffer.buffered.start(0) + 5) {
+            sourceBuffer.remove(0, this.audio.currentTime - 1);
+            return;
+        }
+
+        // Determine next append time
+        var appendTime = 0;
+        if (!this.isFirstBlock) {
+            appendTime = this.sourceBuffer.buffered.end(0);
+        }
+        this.isFirstBlock = false;
+
+        // Append audio segment
+        // sourceBuffer.timestampOffset = appendTime;
+        sourceBuffer.appendBuffer(this.queue.shift());
+
+        // Print stats
+        // console.log("current time: " + audio.currentTime + " buffered time: " + appendTime)
+    }
+
+    mediaSource.addEventListener("sourceopen", function () {
+        sourceBuffer = mediaSource.addSourceBuffer("audio/mpeg");
+        sourceBuffer.addEventListener('updateend', function (_) {
+            appendBlock();
+        });
+        ws.onmessage = (e) => {
+            if (audio.error != null)
+                window.location.reload();
+
+            var reader = new FileReader();
+            reader.addEventListener('loadend', () => {
+                queue.push(reader.result);
+                appendBlock();
+            });
+            reader.readAsArrayBuffer(e.data);
+        }
+    });
+
+    audio.src = URL.createObjectURL(mediaSource);
+</script>
+
+</html>

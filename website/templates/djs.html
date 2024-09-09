@@ -1,0 +1,56 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+
+    <title>djs grid</title>
+</head>
+
+<body>
+    {% include "header.html" %}
+
+    <div class="centered">
+        <h1>DJs</h1>
+        <br>
+        <div id="profilegrid">
+            {% for dj in djs %}
+            <a class="card" href="/dj/{{ dj.handle }}"
+                style="background-color: {{ dj.profile_theme.background }}; text-decoration: none;">
+                <img style="height: 100%;" src="{{ dj.profile_pic.url }}" alt="{{ dj.display_name }}'s profile picture">
+                <div>
+                    <h2 style="color: {{ dj.profile_theme.text }}; margin: 0;">{{ dj.display_name }}</h2>
+                    <p style="color: {{ dj.profile_theme.secondary_text }}; margin-top: 0;">@{{ dj.handle }}</p>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+
+<style>
+    #profilegrid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    h2,
+    p,
+    a {
+        text-decoration: none !important;
+    }
+
+    .card {
+        display: flex;
+        width: 45%;
+        height: 100px;
+        padding: 10px;
+    }
+</style>
+
+</html>

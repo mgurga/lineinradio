@@ -1,0 +1,99 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <script src="https://cdn.jsdelivr.net/gh/benkaiser/fileinput-image-resize@1.0.1/dist/bundle.js"></script>
+
+    <title>profile customizer</title>
+</head>
+
+<body>
+    {% include "header.html" %}
+
+    <div class="centered">
+        <h1>Profile Customizer</h1>
+        <br>
+        <br>
+
+        <form action="/customizer" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div style="display: flex; justify-content: space-between">
+                <div>
+                    <h2 style="margin-bottom: 5px; margin-top: 0;">upload profile picture</h2>
+                    <span>image will be resized to 200x200</span>
+                    <span>preview before saving changes!</span>
+                    <input data-max-width="200" data-format="png" data-max-height="200" name="pfp" accept="image/*"
+                        type="file" data-preview="#pfp">
+                    <br>
+                </div>
+                <img id="pfp" src="{{ logged_dj.profile_pic.url }}" width=200 height=200 alt="profile picture preview">
+            </div>
+
+            <h2 style="margin-bottom: 5px;">change display name</h2>
+            <input name="displayname" type="text" placeholder="{{ logged_dj.display_name }}">
+            <br>
+
+            <h2 style="margin-bottom: 5px;">change bio</h2>
+            <textarea rows=6 name="bio">{{ logged_dj.bio }}</textarea>
+            <br>
+
+            <h2 style="margin-bottom: 5px;">change color scheme</h2>
+            <div style="display: flex; justify-content: space-between;">
+                <div class="inputbox">
+                    <p>background</p>
+                    <input class="colorinput" type="color" name="bgcolor" value="{{ logged_dj.profile_theme.background }}">
+                </div>
+                <div class="inputbox">
+                    <p>primary</p>
+                    <input class="colorinput" type="color" name="prcolor" value="{{ logged_dj.profile_theme.primary }}">
+                </div>
+                <div class="inputbox">
+                    <p>accent</p>
+                    <input class="colorinput" type="color" name="accolor" value="{{ logged_dj.profile_theme.accent }}">
+                </div>
+                <div class="inputbox">
+                    <p>text</p>
+                    <input class="colorinput" type="color" name="txcolor" value="{{ logged_dj.profile_theme.text }}">
+                </div>
+                <div class="inputbox">
+                    <p>subtext</p>
+                    <input class="colorinput" type="color" name="stcolor" value="{{ logged_dj.profile_theme.secondary_text }}">
+                </div>
+            </div>
+            <br>
+            <br>
+            <br>
+
+            <button style="width: fit-content;">save changes</button>
+        </form>
+
+        <br>
+        <br>
+    </div>
+</body>
+
+<style>
+    .inputbox {
+        width: 15%;
+        display: grid;
+        justify-items: center;
+    }
+
+    .colorinput {
+        width: 100%;
+        height: 50px;
+    }
+
+    #pfp {
+        width: max(25%, 200px);
+        height: auto;
+        border: 2px solid #333;
+    }
+</style>
+
+</html>

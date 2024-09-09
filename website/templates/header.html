@@ -1,0 +1,20 @@
+<div class="header">
+    <a class="header-text" href="/">lineinradio 📻</a>
+
+    <a class="header-item" href="/schedule">schedule</a>
+    <a class="header-item" href="/shows">shows</a>
+    <a class="header-item" href="/djs">djs</a>
+    <a class="header-item" href="/about">about</a>
+
+    {% if user.is_authenticated %}
+    <div id="header-right" style="display: flex; float: right;">
+        <a class="header-item" href="/logout" style="color: #f11;">logout</a>
+        <a class="header-item" href="/settings">settings</a>
+        <a href="/dj/{{ user.dj.handle }}">
+            <img style="height: 44px;" src="{{ user.dj.profile_pic.url }}" alt="profile picture">
+        </a>
+    </div>
+    {% else %}
+    <a class="header-item" style="float: right;" href="/login">login</a>
+    {% endif %}
+</div>

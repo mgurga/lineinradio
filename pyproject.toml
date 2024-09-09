@@ -1,0 +1,58 @@
+[project]
+name = "lineinradio"
+description = "24/7 online radio station"
+requires-python = ">=3.9"
+license = {file = "LICENSE"}
+dependencies = [
+    "django",
+    "Pillow",
+    "yt_dlp",
+    "daphne",
+    "channels",
+    "django-q2"
+]
+
+[tool.ruff]
+line-length = 100
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+]
+
+[tool.ruff.format]
+line-ending = "auto"
+quote-style = "double"
+indent-style = "space"
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["E402"]
+"**/{tests,docs,tools}/*" = ["E402"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "B"]
+fixable = ["ALL"]
+extend-select = ["I"]

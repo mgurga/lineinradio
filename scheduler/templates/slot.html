@@ -1,0 +1,12 @@
+{% if slot.is_playing %}
+<p style="background-color: #330">
+{% else %}
+<p>
+{% endif%}
+    {{ slot.datetime|date:"H:i" }} -
+    <a href="/show/{{ slot.episode.show.id }}">
+        {{ slot.episode.show.name }}: {{ slot.episode.name}}</a>
+    by <a href="/dj/{{ slot.episode.show.creator.handle }}">
+        {{ slot.episode.show.creator.display_name }}</a>
+    {% if slot.episode.audiofile %}*{% endif %}
+</p>

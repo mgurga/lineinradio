@@ -1,0 +1,56 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+
+    <title>schedule for {{ sch.date }}</title>
+</head>
+
+<body>
+    {% include "header.html" %}
+
+    <div class="centered">
+        <h1 style="margin-bottom: 20px;">Schedule for {{ sch.date }}</h1>
+
+        <h2>night bloc (00:00 - 06:00)</h2>
+        <div class="bloclist">
+            {% for slot in sch.night_slots %}
+            {% include "slot.html" with slot=slot %}
+            {% endfor %}
+        </div>
+
+        <h2>morning bloc (06:00 - 12:00)</h2>
+        <div class="bloclist">
+            {% for slot in sch.morning_slots %}
+            {% include "slot.html" with slot=slot %}
+            {% endfor %}
+        </div>
+
+        <h2>afternoon bloc (12:00 - 18:00)</h2>
+        <div class="bloclist">
+            {% for slot in sch.afternoon_slots %}
+            {% include "slot.html" with slot=slot %}
+            {% endfor %}
+        </div>
+
+        <h2>evening bloc (18:00 - 24:00)</h2>
+        <div class="bloclist">
+            {% for slot in sch.evening_slots %}
+            {% include "slot.html" with slot=slot %}
+            {% endfor %}
+        </div>
+    </div>
+</body>
+
+<style>
+    .bloclist {
+        margin-left: 40px;
+    }
+</style>
+
+</html>

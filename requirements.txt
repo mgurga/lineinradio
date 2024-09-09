@@ -1,0 +1,6 @@
+django>=4.2
+Pillow>=10.2.0
+yt-dlp
+daphne>=4.0.0
+channels
+django-q2>=1.6.0

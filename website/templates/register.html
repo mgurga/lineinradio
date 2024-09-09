@@ -1,0 +1,81 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+
+    <title>register</title>
+</head>
+
+<body>
+    {% include "header.html" %}
+
+    <div class="centered">
+        <h1>Register</h1>
+        <br>
+
+        <form action="/register" method="post">
+            {% csrf_token %}
+            <div style="display: none;">
+                <!-- im not paying for a email service T_T -->
+                <p style="margin-bottom: 5px;">email</p>
+                <span>(only used to recover passwords)</span>
+                <input name="email" type="email" value="test@example.com">
+                <br>
+            </div>
+
+            <p style="margin-bottom: 5px;">username</p>
+            <span>(only numbers and letters, must be longer than 2 characters, can be changed later)</span>
+            <input id="user" name="username" type="text">
+            <br>
+
+            <p style="margin-bottom: 5px;">password</p>
+            <span>(must be longer than 5 characters)</span>
+            <input id="pass" name="password" type="password">
+            <br>
+
+            <p style="margin-bottom: 5px;">password</p>
+            <span>(again)</span>
+            <input id="passrepeat" type="password">
+            <br>
+            <br>
+
+            <button disabled id="regsubmit">submit</button>
+
+            <br>
+            <div style="color: #f11; font-size: 20pt;">
+                {% if user_form.errors %}
+                {% for field in user_form %}
+
+                {% for error in field.errors %}
+                {{field.label}}: {{ error|escape }}
+                {% endfor %}
+
+                {% endfor %}
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("pass").oninput = () => { update_submit(); }
+        document.getElementById("passrepeat").oninput = () => { update_submit(); }
+        document.getElementById("user").oninput = () => { update_submit(); }
+
+        function update_submit() {
+            if (document.getElementById("pass").value == document.getElementById("passrepeat").value &&
+                document.getElementById("pass").value.length > 5 &&
+                document.getElementById("user").value.length > 2) {
+                document.getElementById("regsubmit").disabled = false;
+            } else {
+                document.getElementById("regsubmit").disabled = true;
+            }
+        }
+    </script>
+</body>
+
+</html>

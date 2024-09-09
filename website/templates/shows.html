@@ -1,0 +1,48 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+
+    <title>djs grid</title>
+</head>
+
+<body>
+    {% include "header.html" %}
+
+    <div class="centered">
+        <h1>Shows</h1>
+        <br>
+        <div id="showlist">
+            {% for show in shows %}
+            <div style="background-color: {{ show.creator.profile_theme.primary }}; box-shadow: 5px 5px 1px 1px {{ show.creator.profile_theme.accent }}; padding: 5px;">
+                <a href="/show/{{ show.id }}">
+                    <img src="{{ show.banner.url }}" alt="show banner">
+                    <h2 style="color: {{ show.creator.profile_theme.text }};">{{ show.name }}</h2>
+                    <p style="color: {{ show.creator.profile_theme.secondary_text }};">{{ show.description|linebreaksbr }}</p>
+                </a>
+            </div>
+            <br>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+
+<style>
+    h2,
+    p,
+    a {
+        text-decoration: none !important;
+        margin: 0;
+    }
+
+    img {
+        width: 100%;
+    }
+</style>
+
+</html>
