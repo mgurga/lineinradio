@@ -49,10 +49,17 @@ def get_current_slot():
         return None
 
     dtslots = list(schedule.slots.order_by("datetime"))
+    current_slots = []
     for s in dtslots:
         t = datetime.now().time()
         if s.datetime.time() <= t and t < add_time(s.datetime.time(), s.episode.length):
+            current_slots.append(s)
+
+    for s in current_slots:
+        if s.important:
             return s
+
+    return current_slots[0]
 
     # print(f"playing: {playing.episode.name}")
 
