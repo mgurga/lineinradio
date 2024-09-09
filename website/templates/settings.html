@@ -25,7 +25,7 @@
             <input name="username" type="text">
             <br>
 
-            <button name="submituser">submit</button>
+            <button class="submitbuttons" name="submituser">change username</button>
             {% if userchangeform == "success" %}
             <span style="color: #0f0; margin-top: 5px;">successfully changed username</span>
             {% elif userchangeform %}
@@ -46,11 +46,11 @@
         <form action="/settings" method="post">
             {% csrf_token %}
             <h2 style="margin-top: 5px;">change password</h2>
-            <span>this is logout all other sessions</span>
+            <span>this will logout all other sessions</span>
             <input name="password" type="password">
             <br>
 
-            <button name="submitpass">submit</button>
+            <button class="submitbuttons" name="submitpass">change password</button>
             {% if passchangeform == "success" %}
             <span style="color: #0f0; margin-top: 5px;">successfully changed password</span>
             {% elif passchangeform %}
@@ -76,5 +76,11 @@
         </form>
     </div>
 </body>
+
+<style>
+    .submitbuttons {
+        width: fit-content;
+    }
+</style>
 
 </html>
