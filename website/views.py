@@ -175,7 +175,7 @@ def customizer_page(request):
     if request.method == "POST" and logged_dj.user.username == request.user.username:
         if request.FILES.get("pfp", False):
             w, h = get_image_dimensions(request.FILES["pfp"])
-            if w != 200 or h != 200:
+            if w > 200 or h > 200:
                 print(f"pfp incorrect size recieved {w}x{h} image")
                 return redirect("/customizer#failed")
 
