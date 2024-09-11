@@ -28,7 +28,8 @@
 </body>
 
 <script>
-    var ws = new WebSocket("ws://" + window.location.host + "/ws/radio/");
+    var wsprefix = (window.location.protocol == "https:") ? "wss://" : "ws://";
+    var ws = new WebSocket(wsprefix + window.location.host + "/ws/radio/");
     const audio = document.getElementById("audio");
     audio.volume = 0.5;
     var mediaSource = new MediaSource();
