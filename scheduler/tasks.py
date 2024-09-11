@@ -11,7 +11,7 @@ from website.models import Episode
 from .models import Schedule, Slot
 
 
-def generate_schedule(date=datetime.now().date()):  # noqa: B008
+def generate_schedule(date=datetime.now().date()) -> Schedule:  # noqa: B008
     def add_time(t, secs):
         temp_datetime = datetime(2000, 1, 1, hour=t.hour, minute=t.minute, second=t.second)
         temp_datetime += timedelta(seconds=secs)
@@ -149,11 +149,7 @@ def download_slots(sl: [Slot]):
 def download_bloc():
     hour = datetime.now().time().hour
 
-    if not Schedule.objects.filter(date=datetime.now().date()).exists():
-        print("no schedule exists, cannot download bloc")
-        return
-
-    schedule = Schedule.objects.filter(date=datetime.now().date())[0]
+    schedule = get_schedule()
 
     if hour <= 5:
         slots_to_download = schedule.night_slots
@@ -186,9 +182,8 @@ def night_duties():
     print("running night duties...")
 
     tmr = datetime.now().date() + timedelta(days=1)
-    generate_schedule(tmr)
+    schedule_tmr = generate_schedule(tmr)
 
-    schedule_tmr = Schedule.objects.filter(date=tmr)[0]
     download_slots(schedule_tmr.morning_slots)
 
     # todo cleanup episodes
