@@ -169,7 +169,7 @@ def download_bloc():
 
 def get_schedule() -> Schedule:
     if Schedule.objects.filter(date=datetime.now().date()).exists():
-        return Schedule.objects.filter(date=datetime.now().date())[0]
+        return Schedule.objects.filter(date=datetime.now().date()).first()
     else:
         s = generate_schedule()
         download_bloc()
