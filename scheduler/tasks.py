@@ -21,17 +21,17 @@ def generate_schedule(date=datetime.now().date()):  # noqa: B008
             return temp_datetime.time()
 
     # delete all schedules date unless it contains an important slot
-    schdate = Schedule.objects.filter(date=date)
-    if schdate.exists():
-        if schdate.count() != 1:
-            for sch in schdate:
-                for slot in sch.slots.all():
-                    slot.delete()
-        else:
-            if schdate[0].slots.filter(important=True).count == 0:
-                for sch in schdate[0]:
-                    for slot in sch.slots.all():
-                        slot.delete()
+    # schdate = Schedule.objects.filter(date=date)
+    # if schdate.exists():
+    #     if schdate.count() != 1:
+    #         for sch in schdate:
+    #             for slot in sch.slots.all():
+    #                 slot.delete()
+    #     else:
+    #         if schdate[0].slots.filter(important=True).count == 0:
+    #             for sch in schdate[0]:
+    #                 for slot in sch.slots.all():
+    #                     slot.delete()
 
     planned_time = time(0, 0)
     used_eps = []
