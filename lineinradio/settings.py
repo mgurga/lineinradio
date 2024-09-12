@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-j8fq)zwjz5*&=#rk05t8f2*l6)=9iq-r=mx!vkyb^!g^g)jl))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-DOMAIN = "http://lineinradio.xyz"
+DOMAIN = "https://lineinradio.xyz"
 ALLOWED_HOSTS = ["localhost", "lineinradio.xyz"]
 CSRF_TRUSTED_ORIGINS = [DOMAIN]
 
