@@ -84,16 +84,6 @@ class CreateShowForm(forms.ModelForm):
         model = Show
         fields = ("banner", "name", "description")
 
-    def clean_banner(self):
-        banner = self.cleaned_data.get("banner", False)
-
-        if banner:
-            w, h = get_image_dimensions(banner)
-            if w > 800 or h > 200:
-                raise forms.ValidationError("banner larger than 800x200")
-        else:
-            raise forms.ValidationError("no banner found")
-
 
 class CreateEpisodeForm(forms.ModelForm):
     description = forms.CharField(required=False)

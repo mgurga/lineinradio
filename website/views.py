@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import yt_dlp
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -213,6 +211,10 @@ def create_show_page(request):
         create_show_form = CreateShowForm(data=request.POST)
 
         if create_show_form.is_valid():
+            w, h = get_image_dimensions(request.FILES["banner"])
+            if w > 800 or h > 200:
+                return redirect("/createshow#incorrectbannersize")
+
             show = create_show_form.save(commit=False)
             show.creator = request.user.dj
             show.show_theme = Theme.objects.create()
@@ -243,6 +245,10 @@ def edit_show_page(request, showid):
         if create_show_form.is_valid():
             if request.FILES.get("banner", False):
                 newbanner = request.FILES["banner"]
+
+                w, h = get_image_dimensions(newbanner)
+                if w > 800 or h > 200:
+                    return redirect(f"/editshow/{showid}#incorrectbannersize")
             else:
                 newbanner = show.banner
 
