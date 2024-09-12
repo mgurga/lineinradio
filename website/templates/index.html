@@ -54,10 +54,10 @@
         }
 
         // Determine next append time
-        var appendTime = 0;
-        if (!this.isFirstBlock) {
-            appendTime = this.sourceBuffer.buffered.end(0);
-        }
+        // var appendTime = 0;
+        // if (!this.isFirstBlock) {
+        //     appendTime = this.sourceBuffer.buffered.end(0);
+        // }
         this.isFirstBlock = false;
 
         // Append audio segment
