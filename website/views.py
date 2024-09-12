@@ -90,10 +90,11 @@ def profile_page(request, username):
         return render(request, "noblank.html", {"thing": "dj"})
 
     shows = Show.objects.filter(creator=user.dj)
-    episodes = []
+
+    episodes = Episode.objects.none()
     for show in shows:
-        for ep in Episode.objects.filter(show=show):
-            episodes.append(ep)
+        episodes |= Episode.objects.filter(show=show)
+    episodes = episodes.order_by("-created")
 
     ctx = {"dj": user.dj, "shows": shows, "episodes": episodes}
     return render(request, "profile.html", ctx)

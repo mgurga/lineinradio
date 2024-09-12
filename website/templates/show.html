@@ -19,8 +19,8 @@
             <div id="userbanner">
                 <img id="pfp" src="{{ show.creator.profile_pic.url }}" alt="profile picture">
                 <div>
-                    <h1 id="displayname">{{ show.creator.display_name }}</h1>
-                    <p id="handle">@{{ show.creator.handle }}</p>
+                    <h1 id="displayname" class="text">{{ show.creator.display_name }}</h1>
+                    <p id="handle" class="secondarytext">@{{ show.creator.handle }}</p>
                     <p class="secondarytext">{{ show.creator.bio|linebreaksbr }}</p>
                 </div>
             </div>
@@ -72,6 +72,10 @@
 </body>
 
 <style>
+    :root {
+        background-color: {{ show.creator.profile_theme.background }} !important;
+    }
+
     .showepcontainer {
         background-color: {{ show.creator.profile_theme.primary }};
         box-shadow: 5px 5px 1px 1px {{ show.creator.profile_theme.accent }};
@@ -102,6 +106,7 @@
         display: flex;
         gap: 10px;
         background-color: {{ show.creator.profile_theme.background }};
+        padding: 5px;
     }
 
     #displayname {
