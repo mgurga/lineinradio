@@ -23,10 +23,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-j8fq)zwjz5*&=#rk05t8f2*l6)=9iq-r=mx!vkyb^!g^g)jl))"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ["localhost"]
-
+DOMAIN = "http://lineinradio.xyz"
+ALLOWED_HOSTS = ["localhost", "lineinradio.xyz"]
+CSRF_TRUSTED_ORIGINS = [DOMAIN]
 
 # Application definition
 
@@ -121,7 +122,11 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = "static/"
+if DEBUG:
+    STATIC_URL = "static/"
+else:
+    STATIC_URL = f"{DOMAIN}/static/"
+STATIC_ROOT = BASE_DIR / "static"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -132,7 +137,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 MEDIA_ROOT = BASE_DIR / "media"
 
-MEDIA_URL = "/media/"
+if DEBUG:
+    MEDIA_URL = "/media/"
+else:
+    MEDIA_URL = f"{DOMAIN}/media/"
 
 
 # Q settings (task runner)
