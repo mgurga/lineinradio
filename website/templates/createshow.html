@@ -7,6 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <script src="https://cdn.jsdelivr.net/gh/benkaiser/fileinput-image-resize@1.0.1/dist/bundle.js"></script>
 
     <title>create show</title>
 </head>
@@ -17,6 +18,16 @@
     <div class="centered" style="font-size: 25pt;">
         <h1>Create Show</h1>
 
+        <span style="color: #f11; margin-top: 5px;">
+            {% if createshowform.errors %}
+            {% for field in createshowform %}
+            {% for error in field.errors %}
+            {{ error|escape }}
+            {% endfor %}
+            {% endfor %}
+            {% endif %}
+        </span>
+
         <img id="bannerpreview" style="width: 100%;" src="/media/showbanners/defaultbanner.png" alt="banner preview">
         <br>
         <br>
@@ -24,9 +35,9 @@
             {% csrf_token %}
 
             <h2 style="margin-bottom: 5px; margin-top: 0;">upload show banner (optional)</h2>
-            <span>image will be resized to 800x200, preview of uploaded image shown above</span>
+            <span>image will be cropped to 800x200, preview of uploaded image shown above</span>
             <input data-max-width="800" data-format="png" data-max-height="200" name="banner" accept="image/*"
-                type="file" data-preview="#bannerpreview">
+                data-fit="crop" type="file" data-preview="#bannerpreview">
 
             <h2 style="margin-bottom: 5px;">show name</h2>
             <input name="name" type="text">

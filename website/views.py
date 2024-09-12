@@ -217,11 +217,10 @@ def create_show_page(request):
             show.creator = request.user.dj
             show.show_theme = Theme.objects.create()
             show.save()
-
-        return redirect(f"/dj/{request.user.dj.handle}")
     else:
         create_show_form = CreateShowForm()
-        return render(request, "createshow.html", {"createshowform": create_show_form})
+
+    return render(request, "createshow.html", {"createshowform": create_show_form})
 
 
 @login_required(login_url="/login")
