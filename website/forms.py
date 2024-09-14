@@ -113,4 +113,7 @@ class CreateEpisodeForm(forms.ModelForm):
         if "https://soundcloud.com/" not in data:
             raise forms.ValidationError("only links from soundcloud are allowed")
 
+        if "/sets" in data:
+            raise forms.ValidationError("sets are not allowed, only single songs (no time limit)")
+
         return data
