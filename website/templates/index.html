@@ -16,9 +16,21 @@
 
     <div class="centered">
         <h1>Hey there! Click play to listen in!</h1>
-        <audio id="audio" autoplay style="width: 100%" controls></audio>
+        <audio id="audio" autoplay style="width: 100%"></audio>
+
+        <div id="radioplayer">
+            <div>
+                <button id="playstop">⏵︎</button>
+                <div style="display: flex; color: white;">
+                    vol
+                    <input type="range" min="0" max="100" id="volslider" style="width: 90px">
+                </div>
+            </div>
+            <canvas id="radiocanvas"></canvas>
+        </div>
+
         <br>
-        <h2>{{ sch.current_bloc_name }}</h2>
+        <h2 style="margin-top: 0;">{{ sch.current_bloc_name }}</h2>
         <div style="margin-left: 40px;">
             {% for slot in sch.current_slots %}
             {% include "slot.html" with slot=slot %}
@@ -27,15 +39,52 @@
     </div>
 </body>
 
+<style>
+    #radioplayer {
+        display: flex;
+        background-color: black;
+    }
+
+    #radiocanvas {
+        height: 120px;
+        width: 100%;
+    }
+
+    #playstop {
+        width: 120px;
+        height: 100px;
+        border-radius: 0;
+        background-color: black;
+        color: white;
+        font-size: 50px;
+    }
+
+    #volslider {
+        accent-color: white;
+        width: 120px;
+        padding: 0;
+        margin: 0;
+        border: 0;
+    }
+</style>
+
 <script>
     var wsprefix = (window.location.protocol == "https:") ? "wss://" : "ws://";
     var ws = new WebSocket(wsprefix + window.location.host + "/ws/radio/");
     const audio = document.getElementById("audio");
+    const volslider = document.getElementById("volslider");
+    volslider.value = 50;
     audio.volume = 0.5;
+    const playstop = document.getElementById("playstop");
+    const rc = document.getElementById("radiocanvas");
+    const rcx = rc.getContext("2d");
     var mediaSource = new MediaSource();
     var queue = [];
     var sourceBuffer = null;
     var isFirstBlock = true;
+    var waves = [];
+    waves.push({ "height": 50, "color": "#fff" });
+    var stopped = true;
 
     ws.onopen = () => {
         // console.log("websocket opened")
@@ -70,23 +119,80 @@
 
     mediaSource.addEventListener("sourceopen", function () {
         sourceBuffer = mediaSource.addSourceBuffer("audio/mpeg");
-        sourceBuffer.addEventListener('updateend', function (_) {
+        sourceBuffer.addEventListener("updateend", function (_) {
             appendBlock();
         });
         ws.onmessage = (e) => {
-            if (audio.error != null)
+            if (audio.error != null) {
                 window.location.reload();
+                waves.push({ "height": waves[waves.length - 1].height, "color": "#d00" });
+            }
 
             var reader = new FileReader();
-            reader.addEventListener('loadend', () => {
+            reader.addEventListener("loadend", () => {
                 queue.push(reader.result);
                 appendBlock();
+                if (!stopped)
+                    waves.push({ "height": waves[waves.length - 1].height, "color": "#0d0" });
             });
             reader.readAsArrayBuffer(e.data);
         }
     });
 
     audio.src = URL.createObjectURL(mediaSource);
+
+    if (!audio.paused || audio.currentTime)
+        playstop.innerHTML = "⏹︎";
+    playstop.onclick = () => {
+        if (playstop.innerHTML == "⏵︎") {
+            audio.play();
+            audio.currentTime = 1e101; // hack to jump to end of stream
+            playstop.innerHTML = "⏹︎";
+            stopped = false;
+        } else if (playstop.innerHTML == "⏹︎") {
+            audio.pause();
+            playstop.innerHTML = "⏵︎";
+            stopped = true;
+        }
+    }
+
+    rcx.fillStyle = "#000";
+    rcx.fillRect(0, 0, rc.width, rc.height);
+
+    function randint(min, max) {
+        const minCeiled = Math.ceil(min);
+        const maxFloored = Math.floor(max);
+        return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled);
+    }
+
+    var waveinterval = setInterval(function () {
+        rcx.fillStyle = "#000";
+        rcx.fillRect(0, 0, rc.width, rc.height);
+
+        for (var i = 0; i < 150; i++) {
+            var wi = (waves.length - 1) - i;
+            if (wi < 0) continue;
+            if (rc.width - (i * 5) + 2 < 0) {
+                waves.shift();
+                continue;
+            }
+
+            rcx.strokeStyle = waves[wi].color;
+            rcx.beginPath();
+            rcx.moveTo(rc.width - (i * 5) + 2, rc.height - 10);
+            rcx.lineTo(rc.width - (i * 5) + 2, rc.height - 10 - waves[wi].height);
+            rcx.stroke();
+        }
+
+        var newheight = waves[waves.length - 1].height + randint(-10, 12);
+        var bounded = Math.max(Math.min(100, newheight), 5);
+        if (!stopped)
+            waves.push({ "height": bounded, "color": "#fff" });
+    }, 250);
+
+    volslider.oninput = (e) => {
+        audio.volume = e.target.value / 100;
+    }
 </script>
 
 </html>
