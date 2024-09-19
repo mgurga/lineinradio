@@ -51,7 +51,7 @@
                 <!-- <a href="/episode/{{ ep.id }}"> -->
                     <div class="textbuttonline">
                         <h2 class="text" style="margin: 0;">{{ ep.show.name }}: {{ ep.name }}</h2>
-                        {% if user.dj.handle == dj.handle %}
+                        {% if user.dj.handle == show.creator.handle %}
                         <div>
                             <a href="/deleteepisode/{{ ep.id }}" onclick="return confirm('are you sure?')">
                                 <button style="background-color: #d00" class="editbuttons">delete</button>
