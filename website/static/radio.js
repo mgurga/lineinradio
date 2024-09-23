@@ -13,7 +13,7 @@ function setsource() {
     if (window.location.hostname == "localhost") {
         audio.src = "http://localhost:8003/";
     } else {
-        audio.src = window.location.host + "/radio";
+        audio.src = "https://" + window.location.host + "/radio/";
     }
 }
 
