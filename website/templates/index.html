@@ -7,9 +7,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{% static 'styles.css' %}">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"
-        integrity="sha512-xi/RZRIF/S0hJ+yJJYuZ5yk6/8pCiRlEXZzoguSMl+vk2i3m6UjUO/WcZ11blRL/O+rnj94JRGwt/CHbc9+6EA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <title>lineinradio</title>
 </head>
@@ -49,35 +46,33 @@
     var waves = [];
     waves.push({ "height": 50, "color": "#fff" });
     var stopped = true;
-    var stream;
+    var audio;
 
-    function setsource() {
+    function getsource() {
         var radiourl;
         if (window.location.hostname == "localhost") {
             radiourl = "http://localhost:8003/";
         } else {
             radiourl = "https://" + window.location.host + "/radio/";
         }
-
-        stream = new Howl({
-            src: [radiourl],
-            format: ["opus"],
-            html5: true,
-            volume: (volslider.value / 100)
-        });
+        return radiourl;
     }
 
     playstop.onclick = () => {
         if (playstop.innerHTML == "⏵︎") {
-            setsource(); // hack to jump to end of stream
-            stream.play();
-            playstop.innerHTML = "⏳";
-            setTimeout(function () {
-                playstop.innerHTML = "⏹︎";
-                stopped = false;
-            }, 5000);
+            audio = new Audio();
+            audio.loop = false;
+            audio.autoplay = false;
+            audio.controlsList = "nodownload";
+            audio.crossOrigin = "anonymous";
+            audio.preload = "none";
+            audio.src = getsource();
+            audio.play();
+
+            playstop.innerHTML = "⏹︎";
+            stopped = false;
         } else if (playstop.innerHTML == "⏹︎") {
-            stream.stop();
+            audio.src = "";
             playstop.innerHTML = "⏵︎";
             stopped = true;
         }
@@ -118,7 +113,7 @@
     }, 250);
 
     volslider.oninput = (e) => {
-        stream.volume(e.target.value / 100);
+        audio.volume = (e.target.value / 100);
     }
 </script>
 
