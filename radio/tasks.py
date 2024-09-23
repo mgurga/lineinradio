@@ -4,10 +4,27 @@ from datetime import datetime, time, timedelta
 
 from django.conf import settings
 
+import scheduler
 from scheduler.models import Slot
-from scheduler.tasks import get_schedule
 
 from .apps import byte_chunk, last_chunk_update
+
+
+def generate_mpd_queue():
+    sch = scheduler.tasks.get_schedule()
+    mpcp = f"mpc -P {settings.MPD_PASSWORD}"
+
+    os.system(f"{mpcp} stop")
+    os.system(f"{mpcp} clear")
+
+    for slot in sch.slots.all():
+        if not slot.important and slot.episode.audiofile.name is not None:
+            os.system(f"{mpcp} add {os.path.basename(slot.episode.audiofile.name)}")
+
+    t = datetime.now()
+    os.system(f"{mpcp} play")
+    print(f"seeking to {t.strftime("%H:%M:%S")}")
+    os.system(f"{mpcp} seekthrough +{t.strftime("%H:%M:%S")}")
 
 
 def file_iterator(file_path, chunk_size=8192, offset=0, length=None):
@@ -44,7 +61,7 @@ def get_current_slot():
         else:
             return temp_datetime.time()
 
-    schedule = get_schedule()
+    schedule = scheduler.tasks.get_schedule()
 
     dtslots = list(schedule.slots.order_by("datetime"))
     current_slots = []

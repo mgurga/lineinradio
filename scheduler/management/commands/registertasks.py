@@ -44,4 +44,13 @@ class Command(BaseCommand):
                 next_run=datetime.now().replace(hour=17, minute=30),
             )
 
+        if not QSchedule.objects.filter(name="crossover duties").exists():
+            QSchedule.objects.get_or_create(
+                name="crossover duties",
+                func="scheduler.tasks.crossover_duties",
+                schedule_type=QSchedule.DAILY,
+                repeats=-1,
+                next_run=datetime.now().replace(hour=0, minute=1),
+            )
+
         print("Successfully registered tasks")

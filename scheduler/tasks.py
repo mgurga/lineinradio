@@ -6,6 +6,7 @@ import yt_dlp
 from django.conf import settings
 from django.core.files import File
 
+import radio.tasks
 from website.models import Episode
 
 from .models import Schedule, Slot
@@ -16,7 +17,7 @@ def generate_schedule(date=datetime.now().date()) -> Schedule:  # noqa: B008
         temp_datetime = datetime(2000, 1, 1, hour=t.hour, minute=t.minute, second=t.second)
         temp_datetime += timedelta(seconds=secs)
         if temp_datetime.day == 2:
-            return time(hour=23, minute=59)
+            return time(hour=0, minute=0)
         else:
             return temp_datetime.time()
 
@@ -83,7 +84,7 @@ def generate_schedule(date=datetime.now().date()) -> Schedule:  # noqa: B008
 
     used_eps.clear()  # clear now because not enough episodes
 
-    while int(planned_time.strftime("%H")) < 23:
+    while int(planned_time.strftime("%H")) != 0:
         ep = possible_evening_eps.pop()
         while ep in used_eps:
             ep = possible_evening_eps.pop()
@@ -163,13 +164,28 @@ def download_bloc():
     download_slots(slots_to_download)
 
 
-def get_schedule() -> Schedule:
-    if Schedule.objects.filter(date=datetime.now().date()).exists():
-        return Schedule.objects.filter(date=datetime.now().date()).first()
+def get_schedule(d=datetime.now().date()) -> Schedule:  # noqa: B008
+    if Schedule.objects.filter(date=d).exists():
+        return Schedule.objects.filter(date=d).first()
     else:
-        s = generate_schedule()
+        s = generate_schedule(date=d)
         download_bloc()
         return s
+
+
+def crossover_duties():
+    """
+    This runs in the morning at 12:01 am, it does the following:
+    - clears the current mpd queue
+    - add all songs for the day in the queue
+    """
+
+    sl = []
+    for slot in get_schedule().slots.all():
+        sl.append(slot)
+    download_slots(sl)
+
+    radio.tasks.generate_mpd_queue()
 
 
 def night_duties():
@@ -182,9 +198,12 @@ def night_duties():
     print("running night duties...")
 
     tmr = datetime.now().date() + timedelta(days=1)
-    schedule_tmr = generate_schedule(tmr)
+    schedule_tmr = get_schedule(tmr)
 
-    download_slots(schedule_tmr.morning_slots)
+    tmr_slots = []
+    for s in schedule_tmr.slots.all():
+        tmr_slots.append(s)
+    download_slots(tmr_slots)
 
     # todo cleanup episodes
 
