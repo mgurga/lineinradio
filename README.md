@@ -39,19 +39,28 @@ Its main functions are:
 - Utilize MediaSource to buffer audio so radio plays without interruptions
 
 # How to run
-First setup the environment
-```
-pip install -r requirements.txt
-./setup.sh
-```
-Then run both these commands at the same time: 
+### Requirements
+- Python 3.9 or above
+- [mpd](https://www.musicpd.org/) and [mpc](https://github.com/MusicPlayerDaemon/mpc)
+- Python dependencies: django, Pillow, ytdlp, daphne, channels, django-q2.
+
+On Debian/Ubuntu you can run the following command to install all dependencies: ```apt install python3 python3-django python3-pil yt-dlp python3-daphne python3-django-channels python3-django-q mpd mpc```
+
+Or install via pip: ```python3 -m pip install -r requirements.txt```
+
+### Setup the environment
+Run the script ```setup.sh```. This will initialize the database and register all scheduled tasks.
+
+### Run the server
+Run these commands at the same time (in the project directory): 
 ```
 python manage.py runserver
 python manage.py qcluster
+mpd --no-daemon radio/mpd.conf 
 ```
-The former starts the Django frontend and latter runs tasks periodically like downloading episodes and generating schedules.
+The first command starts the Django frontend, the second runs tasks periodically like downloading episodes and generating schedules, and the third runs mpd and stores the current queue.
 
-You will also need to serve the media directory under the ```/media/``` endpoint when Django is running in production.
+You will need to serve the media and static directory under the ```/media/``` and ```/static``` endpoints respectively when Django is running in production.
 This is usually done with nginx or another web server.
 
 # Credits
