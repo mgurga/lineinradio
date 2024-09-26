@@ -12,7 +12,10 @@ from website.models import Episode
 from .models import Schedule, Slot
 
 
-def generate_schedule(date=datetime.now().date()) -> Schedule:  # noqa: B008
+def generate_schedule(date=None) -> Schedule:
+    if date is None:
+        date = datetime.now().date()
+
     def add_time(t, secs):
         temp_datetime = datetime(2000, 1, 1, hour=t.hour, minute=t.minute, second=t.second)
         temp_datetime += timedelta(seconds=secs)
@@ -164,7 +167,10 @@ def download_bloc():
     download_slots(slots_to_download)
 
 
-def get_schedule(d=datetime.now().date()) -> Schedule:  # noqa: B008
+def get_schedule(d=None) -> Schedule:
+    if d is None:
+        d = datetime.now().date()
+
     if Schedule.objects.filter(date=d).exists():
         return Schedule.objects.filter(date=d).first()
     else:
