@@ -15,7 +15,7 @@
     {% include "header.html" %}
 
     <div class="centered">
-        <h1>Shows</h1>
+        <h1>Shows ({{shows|length}})</h1>
         <br>
         <div id="showlist">
             {% for show in shows %}
