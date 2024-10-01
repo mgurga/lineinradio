@@ -15,6 +15,9 @@ class Slot(models.Model):
         end_time = self.datetime + timedelta(seconds=self.episode.length)
         return self.datetime <= datetime.now() < end_time
 
+    def __str__(self) -> str:
+        return f"{"!!! " if self.important else ""}{self.episode} @ {self.datetime.time()}"
+
 
 class Schedule(models.Model):
     date = models.DateField()
@@ -75,3 +78,6 @@ class Schedule(models.Model):
             return self.afternoon_slots
         else:
             return self.evening_slots
+
+    def __str__(self) -> str:
+        return f"Schedule for {self.date.strftime("%b %d %Y")} ({self.slots.all().count()} slots)"

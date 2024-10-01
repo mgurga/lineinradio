@@ -1,3 +1,5 @@
+import math
+
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -55,7 +57,7 @@ class DJ(models.Model):
         return self.user.username
 
     def __str__(self):
-        return self.user.username
+        return f"{self.display_name} (@{self.handle})"
 
 
 class Show(models.Model):
@@ -69,8 +71,8 @@ class Show(models.Model):
     # banners are 800x200
     banner = models.ImageField(upload_to="showbanners", default="/showbanners/defaultbanner.png")
 
-    def __str__(self):
-        return self.name
+    def __str__(self) -> str:
+        return f"{self.name} by {self.creator}"
 
 
 class Episode(models.Model):
@@ -88,3 +90,6 @@ class Episode(models.Model):
     morning_bloc = models.BooleanField(default=False)
     afternoon_bloc = models.BooleanField(default=False)
     evening_bloc = models.BooleanField(default=False)
+
+    def __str__(self) -> str:
+        return f"{self.show}: {self.name} ({math.floor(self.length / 60)} min)"
