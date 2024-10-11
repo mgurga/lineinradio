@@ -1,0 +1,257 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+
+    <title>Schedule Editor</title>
+</head>
+
+<body>
+    {% include "header.html" %}
+
+    <div class="centered">
+        <div id="dateheader" style="display: flex; justify-content: space-between; color: white;">
+            <a id="dateminus2"></a>
+            <a id="dateminus1"></a>
+            <b>{{ urldate }}</b>
+            <a id="dateplus1"></a>
+            <a id="dateplus2"></a>
+        </div>
+        <h1 style="margin-bottom: 20px;">Schedule Editor for {{ urldate }}</h1>
+        <button id="delsch" style="background-color: #f00; width: fit-content; display: inline;">delete schedule</button>
+        <button id="gensch" style="display: inline; width: fit-content;">generate schedule</button>
+        <button id="updsch" style="display: inline; width: fit-content;">update schedule</button>
+        <br>
+        <br>
+        <div>
+            <div>
+                <p style="display: inline-block;">Show: </p>
+                <select id="showselect"></select>
+            </div>
+            <div>
+                <p style="display: inline-block;">Episode: </p>
+                <select id="episodeselect"></select>
+            </div>
+            <div>
+                <p style="display: inline-block;">Time: </p>
+                <input style="display: inline;" type="time" id="timeinput">
+            </div>
+            <div>
+                <p style="display: inline;">Important: </p>
+                <input style="width: 20px; height: 20px; display: inline;" type="checkbox" id="importantcb">
+            </div>
+            <br>
+            <button id="addslotbtn">Add Slot</button>
+        </div>
+        <br>
+        {% if not sch %}
+            <h1>Schedule does not exist</h1>
+        {% else %}
+            <h1>Current Schedule</h1>
+
+            <h2>Important slots</h2>
+            <div id="importantslotlist"></div>
+            <br>
+
+            <h2>Normal slots</h2>
+            <div id="slotlist"></div>
+        {% endif %}
+    </div>
+</body>
+
+<style>
+    .bloclist {
+        margin-left: 40px;
+    }
+</style>
+
+<script>
+    var urldate = new Date("{{ urldate }}T00:00");
+
+    const dp1 = document.getElementById("dateplus1");
+    var dateplus1 = new Date(urldate);
+    dateplus1.setDate(dateplus1.getDate() + 1);
+    dp1.href = "/scheduleeditor/" + dateplus1.toISOString().split('T')[0];
+    dp1.innerHTML = "> " + dateplus1.toISOString().split('T')[0];
+
+    const dp2 = document.getElementById("dateplus2");
+    var dateplus2 = new Date(urldate);
+    dateplus2.setDate(dateplus2.getDate() + 2);
+    dp2.href = "/scheduleeditor/" + dateplus2.toISOString().split('T')[0];
+    dp2.innerHTML = ">> " + dateplus2.toISOString().split('T')[0];
+
+    const dm1 = document.getElementById("dateminus1");
+    var dateminus1 = new Date(urldate);
+    dateminus1.setDate(dateminus1.getDate() - 1);
+    dm1.href = "/scheduleeditor/" + dateminus1.toISOString().split('T')[0];
+    dm1.innerHTML = dateminus1.toISOString().split('T')[0] + " <";
+
+    const dm2 = document.getElementById("dateminus2");
+    var dateminus2 = new Date(urldate);
+    dateminus2.setDate(dateminus2.getDate() - 2);
+    dm2.href = "/scheduleeditor/" + dateminus2.toISOString().split('T')[0];
+    dm2.innerHTML = dateminus2.toISOString().split('T')[0] + " <<";
+
+    var eps = JSON.parse(`{{ eps_json|safe }}`);
+    var sch = [
+        {% for slot in sch.all_slots %}
+        {
+        "show": "{{slot.episode.show.name}}", 
+        "name": "{{ slot.episode.name }}", 
+        "creator": "{{ slot.episode.show.creator.handle }}", 
+        "important": {{ slot.important|yesno:"true,false" }},
+        "length": {{ slot.episode.length }},
+        "time": new Date("{{ slot.datetime.isoformat }}")
+        },
+        {% endfor %}
+    ];
+
+    const slotlist = document.getElementById("slotlist");
+    const islotlist = document.getElementById("importantslotlist");
+    const showselect = document.getElementById("showselect");
+    const epselect = document.getElementById("episodeselect");
+    const addshowbtn = document.getElementById("addshowbtn");
+
+    function update_slotlist() {
+        slotlist.innerHTML = "";
+        islotlist.innerHTML = "";
+        for (var i = 0; i < sch.length; i++) {
+            if (sch[i].important) {
+                islotlist.append(create_slot(sch[i], i));
+            } else {
+                slotlist.append(create_slot(sch[i], i));
+            }
+        }
+    }
+
+    function slot_title(slot) {
+        return `${slot.show}: ${slot.name} (${Math.floor(slot.length / 60)} min) by ${slot.creator} @ ${slot.time.toLocaleTimeString()}`;
+    }
+
+    function create_slot(slot, index) {
+        var sdiv = document.createElement("div");
+        sdiv.style = "display: flex; justify-content: space-between;";
+        sdiv.classList = ["slotdiv"];
+
+        var title = document.createElement("p");
+        title.innerHTML = slot_title(slot);
+        sdiv.append(title);
+
+        var deletebtn = document.createElement("button");
+        deletebtn.innerHTML = "delete";
+        deletebtn.style = "background-color: #f00; height: fit-content; width: fit-content;";
+        deletebtn.onclick = () => {
+            sch.splice(index, 1);
+            update_slotlist();
+        }
+        sdiv.append(deletebtn);
+
+        return sdiv;
+    }
+
+    var shows = new Set();
+    for (var s of sch) {
+        shows.add(s.show);
+    }
+    showselect.innerHTML = "";
+    var blankop = document.createElement("option");
+    showselect.append(blankop);
+    for (var s of shows) {
+        var op = document.createElement("option");
+        op.innerHTML = s;
+        op.value = s;
+        showselect.append(op);
+    }
+
+    showselect.onchange = () => {
+        var showname = showselect.value;
+        epselect.innerHTML = "";
+        for (var ep of eps) {
+            if (ep.show == showname) {
+                var op = document.createElement("option");
+                op.innerHTML = ep.name + ` (${Math.floor(ep.length / 60)} min)`;
+                op.value = ep.name;
+                epselect.append(op);
+            }
+        }
+    }
+
+    addslotbtn.onclick = function() {
+        var show = showselect.value;
+        var ep = epselect.value;
+        var timeinput = document.getElementById("timeinput");
+        var imp = document.getElementById("importantcb").value == "on" ? true : false;
+
+        if (show == "" || ep == "" || timeinput.value == "") {
+            alert("show, episode, or time is blank");
+            return;
+        }
+
+        for (var e of eps) {
+            if (e.name == ep && e.show == show) {
+                var newslot = e;
+                newslot.important = imp;
+                var newdate = new Date(urldate);
+                newdate.setTime(newdate.getTime() + timeinput.valueAsNumber);
+                newslot.time = newdate;
+                sch.push(newslot);
+                update_slotlist();
+            }
+        }
+    }
+
+    document.getElementById("delsch").onclick = () => {
+        fetch(window.location.href, {
+            method: "POST",
+            body: JSON.stringify({
+                action: "deleteschedule"
+            }),
+            headers: {"X-CSRFToken": '{{csrf_token}}'}
+        }).then(() => {
+            location.reload();
+        });
+    }
+
+    document.getElementById("gensch").onclick = () => {
+        fetch(window.location.href, {
+            method: "POST",
+            body: JSON.stringify({
+                action: "generateschedule"
+            }),
+            headers: {"X-CSRFToken": '{{csrf_token}}'}
+        }).then(() => {
+            location.reload();
+        });
+    }
+
+    document.getElementById("updsch").onclick = () => {
+        notzsch = sch;
+
+        for (var slot of notzsch) {
+            st = slot.time
+            slot.time = `${st.getFullYear()}-${st.getMonth()}-${st.getDay()}T${st.getHours()}:${st.getMinutes()}:${st.getSeconds()}`
+        }
+
+        fetch(window.location.href, {
+            method: "POST",
+            body: JSON.stringify({
+                action: "updateschedule",
+                schedule: notzsch
+            }),
+            headers: {"X-CSRFToken": '{{csrf_token}}'}
+        }).then(() => {
+            location.reload();
+        });
+    }
+
+    {% if sch %}
+    update_slotlist();
+    {% endif %}
+</script>
+
+</html>

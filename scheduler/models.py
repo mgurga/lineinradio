@@ -24,6 +24,13 @@ class Schedule(models.Model):
     slots = models.ManyToManyField(Slot)
 
     @property
+    def all_slots(self) -> [Slot]:
+        out = []
+        for slot in self.slots.all():
+            out.append(slot)
+        return out
+
+    @property
     def night_slots(self) -> [Slot]:
         out = []
         for slot in self.slots.all():
