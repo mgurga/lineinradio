@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 
+from radio.tasks import generate_mpd_queue
 from website.models import DJ, Episode, Show
 
 from .models import Schedule, Slot
@@ -60,6 +61,9 @@ def schedule_editor_page(request, date):
                     episode=nep,
                 )
                 newsch.slots.add(nslot)
+
+        if datetime.strptime(date, "%Y-%m-%d").date() == datetime.now().date():
+            generate_mpd_queue()
 
         return HttpResponse(status=200)
     else:
