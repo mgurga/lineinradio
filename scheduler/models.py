@@ -13,7 +13,7 @@ class Slot(models.Model):
     @property
     def is_playing(self) -> bool:
         end_time = self.datetime + timedelta(seconds=self.episode.length)
-        return self.datetime <= datetime.now() < end_time
+        return self.datetime.time() <= datetime.now().time() < end_time.time()
 
     def __str__(self) -> str:
         return f"{"!!! " if self.important else ""}{self.episode} @ {self.datetime.time()}"
@@ -22,6 +22,14 @@ class Slot(models.Model):
 class Schedule(models.Model):
     date = models.DateField()
     slots = models.ManyToManyField(Slot)
+
+    @property
+    def important_slots(self) -> [Slot]:
+        out = []
+        for slot in self.slots.all():
+            if slot.important:
+                out.append(slot)
+        return out
 
     @property
     def all_slots(self) -> [Slot]:
