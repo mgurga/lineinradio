@@ -56,7 +56,7 @@ def schedule_editor_page(request, date):
                 ndt = datetime.strptime(slotjson["time"], "%Y-%m-%dT%H:%M:%S")
 
                 nslot = Slot.objects.create(
-                    datetime=ndt,
+                    datetime=datetime.combine(datetime.now().date(), ndt.time()),
                     important=slotjson["important"],
                     episode=nep,
                 )
