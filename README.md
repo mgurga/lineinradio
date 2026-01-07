@@ -39,6 +39,16 @@ Its main functions are:
 - Utilize MediaSource to buffer audio so radio plays without interruptions
 
 # How to run
+## Run prebuilt Docker image
+1. Pull image ```docker pull docker.io/mgurga/lineinradio:v0.1```
+2. Run image (change media folder path) ```docker run -v /path/to/local/media/folder:/media:rw lineinradio:v0.1```
+
+## Build Docker image
+1. Clone repository ```git clone https://github.com/mgurga/lineinradio``` and ```cd lineinradio```
+2. Build Docker container ```docker build --pull -t lineinradio .```
+3. Run image (change media folder path) ```docker run -v /path/to/local/media/folder:/media:rw lineinradio```
+
+## Run locally
 ### Requirements
 - Python 3.9 or above
 - [mpd](https://www.musicpd.org/) and [mpc](https://github.com/MusicPlayerDaemon/mpc)
