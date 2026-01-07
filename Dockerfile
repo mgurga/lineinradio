@@ -12,5 +12,6 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV LIR_MEDIA="/media"
 EXPOSE 8000
 
+VOLUME ["/media"]
 RUN ./setup.sh
 CMD ./run.sh
