@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,13 +25,24 @@ SECRET_KEY = "django-insecure-j8fq)zwjz5*&=#rk05t8f2*l6)=9iq-r=mx!vkyb^!g^g)jl))
 MPD_PASSWORD = "mpdpassword"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 DOMAIN = "https://lineinradio.xyz"
 ALLOWED_HOSTS = ["localhost", "lineinradio.xyz"]
 CSRF_TRUSTED_ORIGINS = [DOMAIN]
 
 # Application definition
+
+# Media
+
+MEDIA_ROOT = Path(os.environ.get("LIR_MEDIA", default=(BASE_DIR / "media")))
+# TODO: copy media folders if MEDIA_ROOT is empty
+
+if DEBUG:
+    MEDIA_URL = "/media/"
+else:
+    MEDIA_URL = f"{DOMAIN}/media/"
+
 
 INSTALLED_APPS = [
     "daphne",
@@ -84,7 +96,7 @@ ASGI_APPLICATION = "lineinradio.asgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": MEDIA_ROOT / "db.sqlite3",
     }
 }
 
@@ -133,15 +145,6 @@ STATIC_ROOT = BASE_DIR / "static"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-# Media
-
-MEDIA_ROOT = BASE_DIR / "media"
-
-if DEBUG:
-    MEDIA_URL = "/media/"
-else:
-    MEDIA_URL = f"{DOMAIN}/media/"
 
 
 # Q settings (task runner)
